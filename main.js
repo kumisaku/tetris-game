@@ -190,3 +190,87 @@ let count = 0;
 let tetromino = spawnNextTetro();
 let rAF = null;
 let gameOver = false;
+
+function loop() {
+    rAF = requestAnimationFrame(loop);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  
+    // Draw the playfield
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 10; col++) {
+        const cell = playfield[row][col];
+        if (cell) {
+          context.fillStyle = colors[cell];
+          context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+        }
+      }
+    }
+  
+    // Draw the active tetromino
+    if (tetromino) {
+      if (++count > 35) {
+        tetromino.row++;
+        count = 0;
+  
+        if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+          tetromino.row--;
+          placeTetromino();
+        }
+      }
+  
+      context.fillStyle = colors[tetromino.name];
+  
+      for (let row = 0; row < tetromino.matrix.length; row++) {
+        for (let col = 0; col < tetromino.matrix[row].length; col++) {
+          if (tetromino.matrix[row][col]) {
+            context.fillRect(
+              (tetromino.col + col) * grid,
+              (tetromino.row + row) * grid,
+              grid - 1,
+              grid - 1
+            );
+          }
+        }
+      }
+    }
+  }
+  
+  // Keyboard controls
+  document.addEventListener('keydown', function (e) {
+    if (gameOver) return;
+  
+    switch (e.which) {
+      case 37: // Left
+      case 39: { // Right
+        const col = e.which === 37
+          ? tetromino.col - 1
+          : tetromino.col + 1;
+        if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+          tetromino.col = col;
+        }
+        break;
+      }
+  
+      case 38: { // Up (rotate)
+        const rotated = rotate(tetromino.matrix);
+        if (isValidMove(rotated, tetromino.row, tetromino.col)) {
+          tetromino.matrix = rotated;
+        }
+        break;
+      }
+  
+      case 40: { // Down (soft drop)
+        const row = tetromino.row + 1;
+        if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
+          tetromino.row = row - 1;
+          placeTetromino();
+        } else {
+          tetromino.row = row;
+        }
+        break;
+      }
+    }
+  });
+
+  rAF = requestAnimationFrame(loop);
+  
