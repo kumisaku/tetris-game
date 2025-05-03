@@ -5,6 +5,10 @@ body{
     justify-content: center;
 }
 
-canvas{
-    border: 3px red;
+#game{
+    border: 2px solid white;
+    margin-top: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
