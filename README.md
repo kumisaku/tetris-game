@@ -1,1 +1,1 @@
-Live Test: https://kumisaku.github.io/simple-tetris/
+Live Test: https://kumisaku.github.io/tetris-game/
